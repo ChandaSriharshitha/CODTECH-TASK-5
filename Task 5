@@ -1,0 +1,123 @@
+import java.util.*;
+
+// Enum for account types
+enum AccountType {
+    SAVINGS, CURRENT;
+}
+
+// Class to represent a bank account
+class BankAccount {
+    private int accountNumber;
+    private String accountHolderName;
+    private double balance;
+    private AccountType accountType;
+    private List<Transaction> transactions;
+
+    public BankAccount(int accountNumber, String accountHolderName, AccountType accountType) {
+        this.accountNumber = accountNumber;
+        this.accountHolderName = accountHolderName;
+        this.accountType = accountType;
+        this.balance = 0.0;
+        this.transactions = new ArrayList<>();
+    }
+
+    // Method to deposit money
+    public void deposit(double amount) {
+        if (amount > 0) {
+            balance += amount;
+            Transaction transaction = new Transaction("Deposit", amount);
+            transactions.add(transaction);
+            System.out.println("Deposit successful. New balance: " + balance);
+        } else {
+            System.out.println("Invalid amount for deposit.");
+        }
+    }
+
+    // Method to withdraw money
+    public void withdraw(double amount) {
+        if (amount > 0 && balance >= amount) {
+            balance -= amount;
+            Transaction transaction = new Transaction("Withdrawal", amount);
+            transactions.add(transaction);
+            System.out.println("Withdrawal successful. New balance: " + balance);
+        } else {
+            System.out.println("Insufficient balance or invalid amount for withdrawal.");
+        }
+    }
+
+    // Method to transfer money to another account
+    public void transfer(BankAccount recipient, double amount) {
+        if (amount > 0 && balance >= amount) {
+            balance -= amount;
+            recipient.deposit(amount);
+            Transaction transaction = new Transaction("Transfer to " + recipient.getAccountHolderName(), amount);
+            transactions.add(transaction);
+            System.out.println("Transfer successful. New balance: " + balance);
+        } else {
+            System.out.println("Insufficient balance or invalid amount for transfer.");
+        }
+    }
+
+    // Method to display transaction history
+    public void displayTransactionHistory() {
+        System.out.println("Transaction History for Account Number: " + accountNumber);
+        for (Transaction transaction : transactions) {
+            System.out.println(transaction);
+        }
+    }
+
+    // Getter methods
+    public int getAccountNumber() {
+        return accountNumber;
+    }
+
+    public String getAccountHolderName() {
+        return accountHolderName;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public AccountType getAccountType() {
+        return accountType;
+    }
+}
+
+// Class to represent a transaction
+class Transaction {
+    private Date timestamp;
+    private String description;
+    private double amount;
+
+    public Transaction(String description, double amount) {
+        this.timestamp = new Date();
+        this.description = description;
+        this.amount = amount;
+    }
+
+    @Override
+    public String toString() {
+        return "Date: " + timestamp + ", Description: " + description + ", Amount: " + amount;
+    }
+}
+
+// Main class to demonstrate the online banking system
+public class OnlineBankingSystem {
+    public static void main(String[] args) {
+        // Create accounts
+        BankAccount account1 = new BankAccount(1001, "Alice", AccountType.SAVINGS);
+        BankAccount account2 = new BankAccount(1002, "Bob", AccountType.CURRENT);
+
+        // Perform transactions
+        account1.deposit(500.0);
+        account1.withdraw(200.0);
+        account1.transfer(account2, 100.0);
+        account2.deposit(300.0);
+        account2.withdraw(50.0);
+
+        // Display transaction history
+        account1.displayTransactionHistory();
+        account2.displayTransactionHistory();
+    }
+}
